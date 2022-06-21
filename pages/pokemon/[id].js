@@ -5,27 +5,17 @@ import { useEffect, useState } from 'react'
 import styles from '../../styles/Detail.module.css'
 import Head from "next/head"
 
-export default function Detail() {
-  const [pokemon, setPokemon] = useState(null)
+export async function getServerSideProps({ params }) {
+  const response = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${params.id}.json`)
 
-  useEffect(() => {
-    async function getPokemon() {
-      const response = await fetch(`https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`)
-      setPokemon(await response.json())
+  return {
+    props: {
+      pokemon: await response.json()
     }
-    if(id) {
-      getPokemon()
-    }
-  }, [id])
-
-  const {
-    query: { id }
-  } = useRouter()
-
-  if(!pokemon) {
-    return null
   }
+}
 
+export default function Detail({ pokemon }) {
   return (
     <div>
     <Head>
